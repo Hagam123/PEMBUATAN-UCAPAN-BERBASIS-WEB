@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📸 STUDIO UCAPAN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0e3d2;
+            background-image: radial-gradient(circle at 10% 20%, #ffefd5 0%, transparent 30%),
+                              radial-gradient(circle at 90% 70%, #dac0a0 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .creator-card {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255, 248, 235, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 80px 80px 60px 60px;
+            box-shadow: 0 30px 50px -15px #7a5d3c, inset 0 1px 4px #fffae9;
+            padding: 40px;
+            border: 2px solid #fae8cf;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #4d3620, #966b40);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subhead {
+            font-size: 1.3rem;
+            color: #6e4f31;
+            border-left: 6px solid #dcb185;
+            padding-left: 20px;
+            margin-bottom: 30px;
+        }
+
+        .selection-panel {
+            background: #fef7ea;
+            border-radius: 60px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 8px #e7cfb0, 0 12px 18px -12px #ad8863;
+        }
+
+        .counter-badge {
+            background: #352615;
+            color: #ffdcb0;
+            display: inline-block;
+            padding: 12px 36px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            border: 2px solid #e0ac78;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .template-tile {
+            background: white;
+            border-radius: 36px 12px 36px 12px;
+            padding: 18px 12px 14px;
+            border: 3px solid #e5c7a3;
+            transition: all 0.15s;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #b7936b;
+        }
+
+        .template-tile.selected {
+            border: 5px solid #1f8a7a;
+            background: #daf5f0;
+            box-shadow: 0 9px 0 #0f5f52;
+            transform: scale(1.02);
+        }
+
+        .preview-mini {
+            height: 110px;
+            border-radius: 24px 6px 24px 6px;
+            background: #eed6ba;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-bottom: 14px;
+            border: 2px dashed #b3885a;
+            padding: 8px;
+            font-size: 1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .photo-example {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .photo-example span {
+            background: #c0a080;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border: 2px solid white;
+        }
+        .photo-example .circle { border-radius: 50%; }
+        .photo-example .square { border-radius: 0; }
+        .photo-example .rounded { border-radius: 8px; }
+        .photo-example .circle-border { border-radius: 50%; border: 3px solid #ffd966; }
+        .photo-example .square-shadow { border-radius: 0; box-shadow: 0 4px 8px black; }
+
+        .tile-footer {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #3f2e1b;
+        }
+
+        .photo-indicator {
+            font-size: 1rem;
+            background: #8b6e4c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 30px;
+            margin-left: 5px;
+        }
+
+        .primary-btn {
+            background: #1e786b;
+            border: none;
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 700;
+            padding: 18px 40px;
+            border-radius: 70px;
+            box-shadow: 0 14px 0 #0f5347;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.05s linear;
+            letter-spacing: 1px;
+        }
+
+        .primary-btn:active { transform: translateY(10px); box-shadow: 0 4px 0 #0f5347; }
+        .primary-btn:disabled { opacity: 0.4; transform: none; box-shadow: 0 14px 0 #0f5347; pointer-events: none; }
+
+        /* tab preview area */
+        .preview-area {
+            background: #fcf4e6;
+            border-radius: 80px;
+            padding: 40px;
+            margin: 30px 0;
+            border: 2px solid #e1bc93;
+            box-shadow: 0 20px 30px -15px #9f7b56;
+        }
+
+        .modern-tab {
+            border-radius: 70px 70px 40px 40px;
+            padding: 40px;
+            transition: all 0.3s;
+        }
+
+        /* gaya template untuk preview (sama dengan hasil) */
+        .tab-m1 { background: #ffd0b0; border: 10px solid #ff9f7c; animation: bounce 2s infinite; font-family: 'Comic Sans MS', cursive; }
+        .tab-m2 { background: #0b2b40; color: #ffd966; border: 6px dashed #49beb7; animation: pulseGlow 2s infinite; font-family: 'Courier New', monospace; text-shadow: 0 0 8px cyan; }
+        .tab-m3 { background: #a7c957; border: 15px double #6b4f3c; transform: rotate(0.5deg); animation: spin 8s linear infinite; font-family: Georgia, serif; }
+        .tab-m4 { background: #f9c74f; border-radius: 10% 50% 10% 50%; animation: wobble 2.5s infinite; font-family: Impact, fantasy; letter-spacing: 3px; }
+        .tab-m5 { background: #577590; color: #f9e9d2; clip-path: polygon(10% 0, 90% 0, 100% 30%, 100% 70%, 90% 100%, 10% 100%, 0 70%, 0 30%); animation: shake 3s infinite; }
+        .tab-m6 { background: #d9bf77; border: 20px solid #bb7e5e; border-image: repeating-linear-gradient(45deg, #8b5a2b, #c7a252 20px); animation: rainbow 10s infinite; }
+        .tab-m7 { background: #fadadd; border-radius: 200px 20px 200px 20px; box-shadow: 0 0 0 10px #fbb1c2; animation: heartbeat 1.5s infinite; }
+        .tab-m8 { background: #ffe3b0; border: 6px ridge #ab8e6a; animation: slidein 3s infinite alternate; font-family: 'Times New Roman', serif; }
+        .tab-m9 { background: #c1d37f; border-bottom: 20px solid #b95050; animation: float 4s infinite; }
+        .tab-m10 { background: #abdbe3; border: 8px dotted #2c3e50; animation: zoom 3s infinite; }
+        .tab-m11 { background: #eab7b7; border: 15px groove #845757; animation: swing 4s infinite; }
+        .tab-m12 { background: #c7b8ea; border-radius: 0 50px 0 50px; animation: tilt 3s infinite; }
+        .tab-m13 { background: #f5b342; border: 10px solid #6f4e2e; transform: skewX(-3deg); animation: spark 2s infinite; }
+        .tab-m14 { background: #b0c487; border: 4px double #3d6e3d; animation: spinSlow 12s linear infinite; }
+        .tab-m15 { background: #f7d794; border: 12px inset #b46f30; animation: bounceIn 2s infinite; }
+        .tab-m16 { background: #b8a9c9; border: 8px outset #594d6b; animation: pulse 2s infinite; }
+        .tab-m17 { background: #f3b9b9; border: 6px dotted #c25151; animation: rubberBand 3s infinite; }
+        .tab-m18 { background: #a3d8c9; border: 20px solid #5a7f6e; border-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" width="10" height="10"><circle cx="5" cy="5" r="3" fill="%2346735c"/></svg>') 25; animation: wave 5s infinite; }
+        .tab-m19 { background: #0e1c36; color: #f4e9cd; border: 8px double #f2c94c; animation: glow 3s infinite; }
+        .tab-m20 { background: #fed9b7; border: 12px dotted #0081a7; animation: jello 3s infinite; }
+        /* Template YouTube tanpa animasi */
+        .tab-m21 { background: #cfe1b9; border: 10px solid #87a878; font-family: 'Arial', sans-serif; }
+
+        /* animasi keyframes (sama) */
+        @keyframes bounce { 0%,100%{ transform:translateY(0); }50%{ transform:translateY(-20px); } }
+        @keyframes pulseGlow { 0%{ box-shadow:0 0 10px #ffd966; } 50%{ box-shadow:0 0 40px #ffaa33; } }
+        @keyframes spin { 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+        @keyframes wobble { 25%{ transform:rotate(5deg); } 50%{ transform:rotate(-5deg); } 75%{ transform:rotate(3deg); } }
+        @keyframes shake { 10%,90%{ transform:translateX(-2px); } 20%,80%{ transform:translateX(6px); } 30%,70%{ transform:translateX(-6px); } }
+        @keyframes rainbow { 0%{ filter:hue-rotate(0deg); } 100%{ filter:hue-rotate(360deg); } }
+        @keyframes heartbeat { 0%{ transform:scale(1); } 25%{ transform:scale(1.1); } 35%{ transform:scale(1); } }
+        @keyframes slidein { from{ margin-left:-30px; } to{ margin-left:30px; } }
+        @keyframes float { 0%{ transform:translateY(0px); } 50%{ transform:translateY(-20px); } }
+        @keyframes zoom { 0%{ transform:scale(1); } 50%{ transform:scale(1.2); } }
+        @keyframes swing { 20%{ transform:rotate(15deg); } 40%{ transform:rotate(-10deg); } 60%{ transform:rotate(5deg); } }
+        @keyframes tilt { 25%{ transform:skewY(5deg); } 50%{ transform:skewY(-5deg); } }
+        @keyframes spark { 0%{ opacity:0.8; } 50%{ opacity:1; box-shadow:0 0 30px gold; } }
+        @keyframes spinSlow { 0%{ transform:rotate(0); } 100%{ transform:rotate(360deg); } }
+        @keyframes bounceIn { 0%{ transform:scale(0.3); } 50%{ transform:scale(1.05); } }
+        @keyframes rubberBand { 0%{ transform:scale3d(1,1,1); } 30%{ transform:scale3d(1.25,0.75,1); } 40%{ transform:scale3d(0.75,1.25,1); } }
+        @keyframes wave { 0%{ border-radius: 60% 40% 30% 70%; } 50%{ border-radius: 30% 60% 70% 40%; } }
+        @keyframes glow { 0%{ text-shadow:0 0 5px white; } 50%{ text-shadow:0 0 30px #f2c94c; } }
+        @keyframes jello { 0%{ transform:scale3d(1,1,1); } 30%{ transform:scale3d(1.25,0.75,1); } 40%{ transform:scale3d(0.75,1.25,1); } }
+        @keyframes pulse { 0%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
+
+        .greeting-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            word-break: break-word;
+            margin: 20px 0 20px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .photo-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .photo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .photo-circle { border-radius: 50%; }
+        .photo-square { border-radius: 0; }
+        .photo-rounded { border-radius: 25px; }
+        .photo-circle-border { border-radius: 50%; border: 8px solid #ffd966; }
+        .photo-square-shadow { border-radius: 0; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+
+        .upload-photo-btn {
+            background: #8a6e4b;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin: 5px;
+            box-shadow: 0 4px 0 #5b452e;
+            transition: 0.05s;
+            display: inline-block;
+        }
+
+        .upload-photo-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #5b452e;
+        }
+
+        .custom-field, .youtube-field {
+            background: #fdf3e5;
+            border: 4px solid #d4a87a;
+            border-radius: 120px;
+            padding: 20px 30px;
+            font-size: 1.6rem;
+            width: 100%;
+            text-align: center;
+            font-weight: 500;
+            color: #2b1f12;
+            outline: none;
+            margin-top: 20px;
+        }
+
+        .custom-field:focus, .youtube-field:focus {
+            border-color: #1d8b7a;
+            background: #ffffff;
+        }
+
+        .youtube-embed {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .youtube-embed iframe {
+            max-width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .tab-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .tab-indicator {
+            background: #a67040;
+            color: white;
+            padding: 10px 40px;
+            border-radius: 60px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 2px solid #f5ce9c;
+        }
+
+        .nav-btn {
+            background: #2f5e7a;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            padding: 16px 50px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #193b4d;
+            transition: 0.05s;
+            font-weight: 600;
+            min-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(8px); box-shadow: 0 2px 0 #193b4d; }
+        .nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+
+        .upload-panel {
+            background: #ecd7bb;
+            border-radius: 70px;
+            padding: 40px;
+            margin-top: 30px;
+            border: 3px solid #c19564;
+        }
+
+        .file-label {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            font-size: 1.4rem;
+            padding: 20px;
+            background: #fff7ea;
+            border-radius: 60px;
+            width: 100%;
+            border: 3px solid #ad7b4c;
+        }
+
+        .emoji-panel {
+            background: #f5e5d2;
+            border-radius: 70px;
+            padding: 30px;
+            margin-top: 20px;
+            border: 3px solid #b38d63;
+        }
+
+        .emoji-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #4f3620;
+        }
+
+        .emoji-inputs {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .emoji-field {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .emoji-field label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #6b4f33;
+        }
+
+        .emoji-field input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 2rem;
+            text-align: center;
+            background: #fff7ea;
+            border: 3px solid #ad7b4c;
+            border-radius: 60px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            color: #4f3620;
+        }
+        .checkbox-option input {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .download-btn {
+            background: #1b7e6b;
+            border: none;
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 800;
+            padding: 30px 60px;
+            border-radius: 120px;
+            cursor: pointer;
+            box-shadow: 0 15px 0 #0d4d40;
+            transition: 0.05s;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .download-btn:active { transform: translateY(12px); box-shadow: 0 3px 0 #0d4d40; }
+        .download-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+        .hidden { display: none; }
+
+        /* font inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap');
+    </style>
+</head>
+<body>
+<div class="creator-card">
+    <div>
+        <h1>📸 STUDIO UCAPAN <span style="font-size:2.2rem; background: #ebcba0; padding:8px 30px; border-radius:60px; color:#392a17;">MAX 5</span></h1>
+        <div class="subhead">pilih 1-5 template (13 template pertama bisa upload foto, template 21 untuk YouTube), kustom pesan, tambah lagu, tambah emoticon, download tab interaktif + animasi + hujan terus</div>
+    </div>
+
+    <!-- LAYAR 1: SELEKSI TEMPLATE -->
+    <div id="selectionScreen">
+        <div class="selection-panel">
+            <span class="counter-badge" id="counterDisplay">0 / 5</span>
+            <div class="template-grid" id="templateGrid"></div>
+        </div>
+        <button class="primary-btn" id="startPreviewBtn" disabled>🎬 MULAI PREVIEW TAB</button>
+    </div>
+
+    <!-- LAYAR 2: PREVIEW + UPLOAD + DOWNLOAD -->
+    <div id="previewScreen" class="hidden">
+        <div class="preview-area">
+            <div id="tabContainer" class="modern-tab"></div>
+            <div class="tab-nav">
+                <button class="nav-btn" id="prevBtn" disabled>⏮️ Sebelum</button>
+                <span class="tab-indicator" id="tabCounter">1 / ?</span>
+                <button class="nav-btn" id="nextBtn">Berikut ⏭️</button>
+            </div>
+        </div>
+
+        <div id="uploadBox" class="upload-panel hidden">
+            <label class="file-label">🎵 Upload lagu / video (akan jadi pembuka di hasil unduhan, auto play setelah klik)</label>
+            <input type="file" id="mediaFile" class="file-input" accept="audio/*,video/*">
+            <p style="margin-top:12px; color:#4f3a24;">*file akan disematkan dalam HTML, putar otomatis setelah klik di halaman hasil</p>
+        </div>
+
+        <!-- Panel Emoticon (muncul setelah preview selesai) -->
+        <div id="emojiPanel" class="emoji-panel hidden">
+            <div class="emoji-title">😊 Tambahkan hingga 3 emoticon (kosongkan jika tidak ingin)</div>
+            <div class="emoji-inputs">
+                <div class="emoji-field">
+                    <label>Emoticon 1</label>
+                    <input type="text" id="emoji1" maxlength="2" placeholder="👍">
+                </div>
+                <div class="emoji-field">
+                    <label>Emoticon 2</label>
+                    <input type="text" id="emoji2" maxlength="2" placeholder="🌹">
+                </div>
+                <div class="emoji-field">
+                    <label>Emoticon 3</label>
+                    <input type="text" id="emoji3" maxlength="2" placeholder="🤦‍♀️">
+                </div>
+            </div>
+            <div class="checkbox-option">
+                <input type="checkbox" id="enableRain" checked>
+                <label for="enableRain">Aktifkan hujan emoticon (terus menerus)</label>
+            </div>
+        </div>
+
+        <button class="download-btn" id="downloadBtn" disabled>💾 DOWNLOAD FILE TAB INTERAKTIF 💾</button>
+    </div>
+</div>
+
+<script>
+(function() {
+    // 21 template (tambahkan template 21 untuk YouTube)
+    const templates = Array.from({ length: 21 }, (_, i) => ({
+        id: i + 1,
+        name: i === 20 ? 'Template YouTube' : `Template ${i+1}`,
+        defaultMsg: i === 20 ? 'Video Spesial' : `Selamat #${i+1} 🎂`
+    }));
+
+    // Konfigurasi foto per template (id 1-13)
+    const photoConfig = {
+        1: { count: 2, style: 'circle' },
+        2: { count: 2, style: 'square' },
+        3: { count: 2, style: 'rounded' },
+        4: { count: 2, style: 'circle-border' },
+        5: { count: 2, style: 'square-shadow' },
+        6: { count: 1, style: 'circle' },
+        7: { count: 1, style: 'square' },
+        8: { count: 1, style: 'rounded' },
+        9: { count: 1, style: 'circle-border' },
+        10: { count: 1, style: 'square-shadow' },
+        11: { count: 1, style: 'circle' },
+        12: { count: 1, style: 'square' },
+        13: { count: 1, style: 'rounded' }
+    };
+
+    let selectedIds = [];           // array id terpilih (max 5)
+    let customMessages = {};         // id => teks custom
+    let uploadedPhotos = {};         // id => array dataURL foto (panjang sesuai count)
+    let youtubeLinks = {};           // id => string URL YouTube (untuk template 21)
+    let currentIndex = 0;            // index di selectedIds
+
+    let audioCtx = null;
+    let mediaFileData = null;        // { dataURL, type } untuk disertakan di hasil
+    // Emoji akan diambil dari input saat download
+
+    // DOM elements
+    const selectionScreen = document.getElementById('selectionScreen');
+    const previewScreen = document.getElementById('previewScreen');
+    const templateGrid = document.getElementById('templateGrid');
+    const counterDisplay = document.getElementById('counterDisplay');
+    const startBtn = document.getElementById('startPreviewBtn');
+    const tabContainer = document.getElementById('tabContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const tabCounter = document.getElementById('tabCounter');
+    const uploadBox = document.getElementById('uploadBox');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const mediaInput = document.getElementById('mediaFile');
+    const emojiPanel = document.getElementById('emojiPanel');
+    const emoji1 = document.getElementById('emoji1');
+    const emoji2 = document.getElementById('emoji2');
+    const emoji3 = document.getElementById('emoji3');
+    const enableRain = document.getElementById('enableRain');
+
+    // Set default emoji
+    emoji1.value = '👍';
+    emoji2.value = '🌹';
+    emoji3.value = '🤦‍♀️';
+
+    // ----- Inisialisasi Audio -----
+    function initAudio() {
+        if (!audioCtx) {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {}
+        }
+    }
+
+    function playSound(id) {
+        if (!audioCtx) initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => genSound(id));
+        } else {
+            genSound(id);
+        }
+    }
+
+    function genSound(id) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.08, now);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const base = 200 + id * 25;
+        osc.type = ['sine', 'square', 'sawtooth', 'triangle', 'sine'][id % 5];
+        const p = id % 5;
+        if (p === 0) {
+            osc.frequency.setValueAtTime(base, now);
+            osc.frequency.linearRampToValueAtTime(base*1.5, now+0.15);
+            osc.stop(now+0.2);
+        } else if (p === 1) {
+            osc.frequency.setValueAtTime(base, now);
+            osc.frequency.setValueAtTime(base*1.2, now+0.1);
+            osc.frequency.setValueAtTime(base*0.8, now+0.2);
+            osc.stop(now+0.3);
+        } else if (p === 2) {
+            osc.frequency.setValueAtTime(base*1.8, now);
+            osc.frequency.exponentialRampToValueAtTime(base, now+0.25);
+            osc.stop(now+0.3);
+        } else if (p === 3) {
+            osc.frequency.setValueAtTime(base, now);
+            for (let i=0; i<4; i++) osc.frequency.setValueAtTime(base + i*100, now + i*0.04);
+            osc.stop(now+0.2);
+        } else {
+            osc.frequency.setValueAtTime(base, now);
+            osc.frequency.setValueAtTime(base*1.1, now+0.1);
+            osc.frequency.setValueAtTime(base, now+0.2);
+            osc.stop(now+0.4);
+        }
+        osc.start(now);
+    }
+
+    // ----- Render grid template dengan contoh foto & youtube badge -----
+    function renderGrid() {
+        let html = '';
+        templates.forEach(t => {
+            const isSelected = selectedIds.includes(t.id);
+            const miniClass = `mini${((t.id-1) % 5) + 1}`;
+            const config = photoConfig[t.id];
+            let photoIndicator = '';
+            if (config) {
+                const count = config.count;
+                const style = config.style;
+                let examplePhotos = '';
+                for (let i=0; i<count; i++) {
+                    let shapeClass = '';
+                    if (style.includes('circle')) shapeClass = 'circle';
+                    else if (style.includes('square')) shapeClass = 'square';
+                    else if (style.includes('rounded')) shapeClass = 'rounded';
+                    else shapeClass = 'circle';
+                    examplePhotos += `<span class="${shapeClass}" style="background:#c0a080; width:25px; height:25px; display:inline-block; border:2px solid white; ${shapeClass==='square'?'border-radius:0;':shapeClass==='rounded'?'border-radius:8px;':'border-radius:50%;'}"></span>`;
+                }
+                photoIndicator = `<div class="photo-example">${examplePhotos}</div>`;
+            } else if (t.id === 21) {
+                photoIndicator = `<div style="font-size:1.5rem;">▶️ YouTube</div>`;
+            }
+            html += `
+            <div class="template-tile ${isSelected ? 'selected' : ''}" data-id="${t.id}">
+                <div class="preview-mini ${miniClass}">
+                    ${photoIndicator ? photoIndicator : '🎁 ' + t.defaultMsg}
+                </div>
+                <div class="tile-footer">
+                    <span>${t.name} ${config ? '<span class="photo-indicator">📸 '+config.count+'</span>' : (t.id===21 ? '<span class="photo-indicator">📺</span>' : '')}</span>
+                    <span style="font-size:1.4rem;">${isSelected ? '✅' : '○'}</span>
+                </div>
+            </div>`;
+        });
+        templateGrid.innerHTML = html;
+
+        document.querySelectorAll('.template-tile').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = parseInt(card.dataset.id);
+                if (selectedIds.includes(id)) {
+                    selectedIds = selectedIds.filter(s => s !== id);
+                    // Hapus data terkait
+                    delete uploadedPhotos[id];
+                    delete youtubeLinks[id];
+                } else {
+                    if (selectedIds.length >= 5) {
+                        alert('Maksimal 5 template!');
+                        return;
+                    }
+                    selectedIds.push(id);
+                }
+                updateSelection();
+            });
+        });
+    }
+
+    function updateSelection() {
+        renderGrid();
+        counterDisplay.innerText = `${selectedIds.length} / 5`;
+        startBtn.disabled = selectedIds.length === 0;
+    }
+
+    // ----- Preview tab dengan upload foto & youtube sesuai konfigurasi -----
+    function showTab(index) {
+        if (selectedIds.length === 0) return;
+        const id = selectedIds[index];
+        const tpl = templates.find(t => t.id === id);
+        const msg = customMessages[id] !== undefined ? customMessages[id] : tpl.defaultMsg;
+        const config = photoConfig[id];
+        const hasPhoto = !!config;
+        const isYouTube = id === 21;
+
+        // set class tabContainer sesuai id
+        tabContainer.className = `modern-tab tab-m${id}`;
+        
+        let photoHtml = '';
+        if (hasPhoto) {
+            const count = config.count;
+            const style = config.style;
+            const photoArray = uploadedPhotos[id] || [];
+            // Siapkan container untuk foto
+            let photoItems = '';
+            for (let i = 0; i < count; i++) {
+                const photoUrl = photoArray[i];
+                if (photoUrl) {
+                    // Tampilkan foto yang sudah diupload
+                    photoItems += `
+                        <div class="photo-item">
+                            <img src="${photoUrl}" class="photo-preview photo-${style}" alt="foto ${i+1}">
+                        </div>
+                    `;
+                } else {
+                    // Tombol upload untuk slot ini
+                    photoItems += `
+                        <div class="photo-item">
+                            <button class="upload-photo-btn" data-slot="${i}">📸 Upload Foto ${i+1}</button>
+                        </div>
+                    `;
+                }
+            }
+            photoHtml = `<div class="photo-container">${photoItems}</div>`;
+        } else if (isYouTube) {
+            // Tampilkan input YouTube dan preview jika ada
+            const youtubeUrl = youtubeLinks[id] || '';
+            let embedHtml = '';
+            const videoId = extractYouTubeId(youtubeUrl);
+            if (videoId) {
+                embedHtml = `<div class="youtube-embed"><iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+            } else if (youtubeUrl) {
+                embedHtml = `<p style="color:red; text-align:center;">Link YouTube tidak valid</p>`;
+            }
+            photoHtml = `
+                <div>
+                    <input type="text" class="youtube-field" id="youtubeInput" value="${escapeHtml(youtubeUrl)}" placeholder="Masukkan link YouTube (contoh: https://youtu.be/... atau https://www.youtube.com/watch?v=...)">
+                    ${embedHtml}
+                </div>
+            `;
+        }
+
+        tabContainer.innerHTML = `
+            <div class="greeting-text">${escapeHtml(msg)}</div>
+            ${photoHtml}
+            <input type="text" class="custom-field" id="tabMsgInput" value="${escapeHtml(msg)}" placeholder="Ketik ucapanmu...">
+        `;
+
+        // Event untuk input pesan
+        document.getElementById('tabMsgInput').addEventListener('input', (e) => {
+            customMessages[id] = e.target.value;
+        });
+
+        // Event untuk tombol upload foto
+        if (hasPhoto) {
+            document.querySelectorAll('.upload-photo-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const slot = parseInt(e.target.dataset.slot);
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (ev) => {
+                        const file = ev.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                                if (!uploadedPhotos[id]) uploadedPhotos[id] = [];
+                                uploadedPhotos[id][slot] = event.target.result;
+                                showTab(index); // refresh tab
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    };
+                    input.click();
+                });
+            });
+        }
+
+        // Event untuk input YouTube
+        if (isYouTube) {
+            const youtubeInput = document.getElementById('youtubeInput');
+            if (youtubeInput) {
+                youtubeInput.addEventListener('input', (e) => {
+                    youtubeLinks[id] = e.target.value;
+                    showTab(index); // refresh untuk menampilkan embed
+                });
+            }
+        }
+
+        // putar suara otomatis
+        playSound(id);
+
+        tabCounter.innerText = `${index+1} / ${selectedIds.length}`;
+        prevBtn.disabled = index === 0;
+        if (index === selectedIds.length - 1) {
+            nextBtn.innerText = 'Selesai ⏭️';
+        } else {
+            nextBtn.innerText = 'Berikut ⏭️';
+        }
+        // Pastikan tombol next tidak dinonaktifkan sebelum akhir
+        nextBtn.disabled = false;
+    }
+
+    // Fungsi untuk mengekstrak ID YouTube dari berbagai format URL (perbaiki regex)
+    function extractYouTubeId(url) {
+        if (!url || typeof url !== 'string') return null;
+        // Pola untuk berbagai format YouTube
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+            /^([a-zA-Z0-9_-]{11})$/ // jika langsung ID
+        ];
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+
+    function nextTab() {
+        if (currentIndex < selectedIds.length - 1) {
+            currentIndex++;
+            showTab(currentIndex);
+        } else {
+            // selesai, tampilkan upload dan emoji panel
+            uploadBox.classList.remove('hidden');
+            emojiPanel.classList.remove('hidden');
+            downloadBtn.disabled = false;
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            tabContainer.innerHTML = '<div class="greeting-text" style="font-size:3rem;">✨ SELESAI ✨</div><p style="font-size:1.8rem; text-align:center;">Upload lagu, isi emoticon, lalu download</p>';
+        }
+    }
+
+    function prevTab() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            showTab(currentIndex);
+        }
+    }
+
+    // ----- Beralih ke mode preview -----
+    function startPreview() {
+        if (selectedIds.length === 0) return;
+        // urutkan id agar konsisten
+        selectedIds.sort((a,b) => a - b);
+        currentIndex = 0;
+        selectionScreen.classList.add('hidden');
+        previewScreen.classList.remove('hidden');
+        uploadBox.classList.add('hidden');
+        emojiPanel.classList.add('hidden');
+        downloadBtn.disabled = true;
+        showTab(0);
+        initAudio(); // siapkan audio
+    }
+
+    // ----- Escape HTML -----
+    function escapeHtml(unsafe) {
+        return unsafe.replace(/[&<>"]/g, m => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '"') return '&quot;';
+            return m;
+        });
+    }
+
+    // ----- Generate file hasil (dengan navigasi tab, animasi, suara, foto, youtube, dan hujan terus) -----
+    function generateHTML() {
+        const sorted = [...selectedIds].sort((a,b) => a - b);
+        const templateData = sorted.map(id => ({
+            id,
+            msg: customMessages[id] !== undefined ? customMessages[id] : templates.find(t => t.id === id).defaultMsg,
+            photos: uploadedPhotos[id] || [], // array foto
+            photoConfig: photoConfig[id] || null,
+            youtubeUrl: youtubeLinks[id] || null // untuk template 21
+        }));
+
+        // Ambil emoticon dari input (hanya yang tidak kosong)
+        const emojis = [];
+        if (emoji1.value.trim() !== '') emojis.push(emoji1.value.trim());
+        if (emoji2.value.trim() !== '') emojis.push(emoji2.value.trim());
+        if (emoji3.value.trim() !== '') emojis.push(emoji3.value.trim());
+        const rainEnabled = enableRain.checked && emojis.length > 0; // hanya aktif jika ada emoji dan checkbox dicentang
+
+        // Style untuk hasil (sama dengan style di halaman ini, ditambah style foto dan hujan)
+        let styleResult = `
+        <style>
+            * { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; }
+            body { background: #ecdac2; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; position: relative; overflow-x: hidden; }
+            .result-container { max-width: 1000px; width:100%; background: #faf3e7; border-radius: 70px; padding: 40px; box-shadow: 0 30px 40px -20px #7a603f; position: relative; z-index: 10; }
+            .media-box { text-align: center; margin-bottom: 30px; }
+            .tab-wrapper { background: #fff7ec; border-radius: 60px; padding: 30px; border: 2px solid #ddb78a; }
+            .result-tab { border-radius: 50px 50px 30px 30px; padding: 40px; transition: all 0.3s; }
+            .msg-display { font-size: 2.8rem; font-weight: 700; word-break: break-word; text-align: center; margin: 20px 0; }
+            .photo-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+            .photo-preview { width: 150px; height: 150px; object-fit: cover; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+            .photo-circle { border-radius: 50%; }
+            .photo-square { border-radius: 0; }
+            .photo-rounded { border-radius: 25px; }
+            .photo-circle-border { border-radius: 50%; border: 8px solid #ffd966; }
+            .photo-square-shadow { border-radius: 0; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+            .youtube-embed { text-align: center; margin: 20px 0; }
+            .youtube-embed iframe { max-width: 100%; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+            .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+            .page-indicator { background: #a67040; color: white; padding: 8px 40px; border-radius: 40px; font-size: 1.4rem; }
+            .nav-button { background: #2f5e7a; border: none; color: white; font-size: 1.8rem; padding: 12px 40px; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 0 #193b4d; transition: 0.05s; font-weight:600; }
+            .nav-button:active { transform: translateY(6px); box-shadow: 0 2px 0 #193b4d; }
+            .nav-button:disabled { opacity:0.3; pointer-events:none; }
+            /* 21 gaya template + animasi (kecuali template 21 tanpa animasi) */
+            .res-tab-m1 { background: #ffd0b0; border: 10px solid #ff9f7c; animation: bounce 2s infinite; font-family: 'Comic Sans MS', cursive; }
+            .res-tab-m2 { background: #0b2b40; color: #ffd966; border: 6px dashed #49beb7; animation: pulseGlow 2s infinite; font-family: 'Courier New', monospace; text-shadow: 0 0 8px cyan; }
+            .res-tab-m3 { background: #a7c957; border: 15px double #6b4f3c; transform: rotate(0.5deg); animation: spin 8s linear infinite; font-family: Georgia, serif; }
+            .res-tab-m4 { background: #f9c74f; border-radius: 10% 50% 10% 50%; animation: wobble 2.5s infinite; font-family: Impact, fantasy; letter-spacing: 3px; }
+            .res-tab-m5 { background: #577590; color: #f9e9d2; clip-path: polygon(10% 0,90% 0,100% 30%,100% 70%,90% 100%,10% 100%,0 70%,0 30%); animation: shake 3s infinite; }
+            .res-tab-m6 { background: #d9bf77; border: 20px solid #bb7e5e; border-image: repeating-linear-gradient(45deg, #8b5a2b, #c7a252 20px); animation: rainbow 10s infinite; }
+            .res-tab-m7 { background: #fadadd; border-radius: 200px 20px 200px 20px; box-shadow: 0 0 0 10px #fbb1c2; animation: heartbeat 1.5s infinite; }
+            .res-tab-m8 { background: #ffe3b0; border: 6px ridge #ab8e6a; animation: slidein 3s infinite alternate; font-family: 'Times New Roman', serif; }
+            .res-tab-m9 { background: #c1d37f; border-bottom: 20px solid #b95050; animation: float 4s infinite; }
+            .res-tab-m10 { background: #abdbe3; border: 8px dotted #2c3e50; animation: zoom 3s infinite; }
+            .res-tab-m11 { background: #eab7b7; border: 15px groove #845757; animation: swing 4s infinite; }
+            .res-tab-m12 { background: #c7b8ea; border-radius: 0 50px 0 50px; animation: tilt 3s infinite; }
+            .res-tab-m13 { background: #f5b342; border: 10px solid #6f4e2e; transform: skewX(-3deg); animation: spark 2s infinite; }
+            .res-tab-m14 { background: #b0c487; border: 4px double #3d6e3d; animation: spinSlow 12s linear infinite; }
+            .res-tab-m15 { background: #f7d794; border: 12px inset #b46f30; animation: bounceIn 2s infinite; }
+            .res-tab-m16 { background: #b8a9c9; border: 8px outset #594d6b; animation: pulse 2s infinite; }
+            .res-tab-m17 { background: #f3b9b9; border: 6px dotted #c25151; animation: rubberBand 3s infinite; }
+            .res-tab-m18 { background: #a3d8c9; border: 20px solid #5a7f6e; border-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" width="10" height="10"><circle cx="5" cy="5" r="3" fill="%2346735c"/></svg>') 25; animation: wave 5s infinite; }
+            .res-tab-m19 { background: #0e1c36; color: #f4e9cd; border: 8px double #f2c94c; animation: glow 3s infinite; }
+            .res-tab-m20 { background: #fed9b7; border: 12px dotted #0081a7; animation: jello 3s infinite; }
+            .res-tab-m21 { background: #cfe1b9; border: 10px solid #87a878; font-family: 'Arial', sans-serif; }
+            /* animasi keyframes (sama) */
+            @keyframes bounce { 0%,100%{ transform:translateY(0); }50%{ transform:translateY(-20px); } }
+            @keyframes pulseGlow { 0%{ box-shadow:0 0 10px #ffd966; } 50%{ box-shadow:0 0 40px #ffaa33; } }
+            @keyframes spin { 0%{ transform:rotate(0deg); } 100%{ transform:rotate(360deg); } }
+            @keyframes wobble { 25%{ transform:rotate(5deg); } 50%{ transform:rotate(-5deg); } 75%{ transform:rotate(3deg); } }
+            @keyframes shake { 10%,90%{ transform:translateX(-2px); } 20%,80%{ transform:translateX(6px); } 30%,70%{ transform:translateX(-6px); } }
+            @keyframes rainbow { 0%{ filter:hue-rotate(0deg); } 100%{ filter:hue-rotate(360deg); } }
+            @keyframes heartbeat { 0%{ transform:scale(1); } 25%{ transform:scale(1.1); } 35%{ transform:scale(1); } }
+            @keyframes slidein { from{ margin-left:-30px; } to{ margin-left:30px; } }
+            @keyframes float { 0%{ transform:translateY(0px); } 50%{ transform:translateY(-20px); } }
+            @keyframes zoom { 0%{ transform:scale(1); } 50%{ transform:scale(1.2); } }
+            @keyframes swing { 20%{ transform:rotate(15deg); } 40%{ transform:rotate(-10deg); } 60%{ transform:rotate(5deg); } }
+            @keyframes tilt { 25%{ transform:skewY(5deg); } 50%{ transform:skewY(-5deg); } }
+            @keyframes spark { 0%{ opacity:0.8; } 50%{ opacity:1; box-shadow:0 0 30px gold; } }
+            @keyframes spinSlow { 0%{ transform:rotate(0); } 100%{ transform:rotate(360deg); } }
+            @keyframes bounceIn { 0%{ transform:scale(0.3); } 50%{ transform:scale(1.05); } }
+            @keyframes rubberBand { 0%{ transform:scale3d(1,1,1); } 30%{ transform:scale3d(1.25,0.75,1); } 40%{ transform:scale3d(0.75,1.25,1); } }
+            @keyframes wave { 0%{ border-radius: 60% 40% 30% 70%; } 50%{ border-radius: 30% 60% 70% 40%; } }
+            @keyframes glow { 0%{ text-shadow:0 0 5px white; } 50%{ text-shadow:0 0 30px #f2c94c; } }
+            @keyframes jello { 0%{ transform:scale3d(1,1,1); } 30%{ transform:scale3d(1.25,0.75,1); } 40%{ transform:scale3d(0.75,1.25,1); } }
+            @keyframes pulse { 0%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
+
+            /* Hujan emoticon terus menerus */
+            .rain-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 100;
+                overflow: hidden;
+            }
+            .raindrop {
+                position: absolute;
+                font-size: 2rem;
+                animation: fall linear forwards;
+                opacity: 0.8;
+            }
+            @keyframes fall {
+                0% { transform: translateY(-10vh); opacity: 1; }
+                100% { transform: translateY(110vh); opacity: 0; }
+            }
+        </style>
+        `;
+
+        // Media tag jika ada
+        let mediaTag = '';
+        if (mediaFileData) {
+            if (mediaFileData.type.startsWith('audio/')) {
+                mediaTag = `<div class="media-box"><audio controls loop><source src="${mediaFileData.dataURL}" type="${mediaFileData.type}"></audio></div>`;
+            } else if (mediaFileData.type.startsWith('video/')) {
+                mediaTag = `<div class="media-box"><video controls loop width="100%"><source src="${mediaFileData.dataURL}" type="${mediaFileData.type}"></video></div>`;
+            }
+        }
+
+        // Script untuk navigasi dan suara di hasil, serta auto play media dan hujan terus
+        const scriptResult = `
+        <script>
+            const templateItems = ${JSON.stringify(templateData)};
+            const emojis = ${JSON.stringify(emojis)};
+            const rainEnabled = ${rainEnabled};
+            let current = 0;
+            let audioCtx = null;
+            let rainInterval = null;
+
+            function initAudio() { if(!audioCtx) try { audioCtx = new AudioContext(); } catch(e){} }
+            function playSound(id) {
+                if(!audioCtx) initAudio();
+                if(!audioCtx) return;
+                if(audioCtx.state==='suspended') audioCtx.resume().then(()=>genSound(id));
+                else genSound(id);
+            }
+            function genSound(id) {
+                if(!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                gain.gain.value = 0.08;
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                const base = 200 + id*25;
+                osc.type = ['sine','square','sawtooth','triangle','sine'][id%5];
+                const p = id%5;
+                if(p===0) { osc.frequency.setValueAtTime(base,now); osc.frequency.linearRampToValueAtTime(base*1.5,now+0.15); osc.stop(now+0.2); }
+                else if(p===1) { osc.frequency.setValueAtTime(base,now); osc.frequency.setValueAtTime(base*1.2,now+0.1); osc.frequency.setValueAtTime(base*0.8,now+0.2); osc.stop(now+0.3); }
+                else if(p===2) { osc.frequency.setValueAtTime(base*1.8,now); osc.frequency.exponentialRampToValueAtTime(base,now+0.25); osc.stop(now+0.3); }
+                else if(p===3) { osc.frequency.setValueAtTime(base,now); for(let i=0;i<4;i++) osc.frequency.setValueAtTime(base+i*100,now+i*0.04); osc.stop(now+0.2); }
+                else { osc.frequency.setValueAtTime(base,now); osc.frequency.setValueAtTime(base*1.1,now+0.1); osc.frequency.setValueAtTime(base,now+0.2); osc.stop(now+0.4); }
+                osc.start(now);
+            }
+
+            function extractYouTubeId(url) {
+                if (!url || typeof url !== 'string') return null;
+                const patterns = [
+                    /(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/|youtube\\.com\\/embed\\/|youtube\\.com\\/v\\/|youtube\\.com\\/shorts\\/)([a-zA-Z0-9_-]{11})/,
+                    /^([a-zA-Z0-9_-]{11})$/
+                ];
+                for (let pattern of patterns) {
+                    const match = url.match(pattern);
+                    if (match) return match[1];
+                }
+                return null;
+            }
+
+            function renderTab(index) {
+                const item = templateItems[index];
+                const tabDiv = document.getElementById('resultTab');
+                tabDiv.className = 'result-tab res-tab-m' + item.id;
+                let photoHtml = '';
+                if (item.photos && item.photos.length > 0 && item.photoConfig) {
+                    let photoItems = '';
+                    for (let i=0; i<item.photos.length; i++) {
+                        if (item.photos[i]) {
+                            photoItems += '<div class="photo-item"><img src="' + item.photos[i] + '" class="photo-preview photo-' + item.photoConfig.style + '" alt="foto"></div>';
+                        }
+                    }
+                    if (photoItems) photoHtml = '<div class="photo-container">' + photoItems + '</div>';
+                } else if (item.id === 21 && item.youtubeUrl) {
+                    const videoId = extractYouTubeId(item.youtubeUrl);
+                    if (videoId) {
+                        photoHtml = '<div class="youtube-embed"><iframe width="560" height="315" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe></div>';
+                    } else {
+                        photoHtml = '<p style="color:red; text-align:center;">Link YouTube tidak valid</p>';
+                    }
+                }
+                tabDiv.innerHTML = '<div class="msg-display">🎉 ' + escapeHtml(item.msg) + ' 🎉</div>' + photoHtml;
+                document.getElementById('pageInfo').innerText = (index+1) + ' / ' + templateItems.length;
+                document.getElementById('prevRes').disabled = index === 0;
+                document.getElementById('nextRes').disabled = index === templateItems.length-1;
+                playSound(item.id);
+            }
+
+            function escapeHtml(unsafe) {
+                return unsafe.replace(/[&<>"]/g, function(m) {
+                    if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; if(m==='"') return '&quot;';
+                    return m;
+                });
+            }
+
+            // Fungsi untuk menciptakan hujan emoticon terus menerus
+            function startRain() {
+                if (!rainEnabled || !emojis.length) return;
+                const container = document.getElementById('rainContainer');
+                if (!container) return;
+
+                function addDrop() {
+                    const drop = document.createElement('div');
+                    drop.className = 'raindrop';
+                    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                    drop.textContent = randomEmoji;
+                    drop.style.left = Math.random() * 100 + '%';
+                    drop.style.animationDuration = (2 + Math.random() * 3) + 's';
+                    drop.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+                    drop.style.animationDelay = '0s';
+                    container.appendChild(drop);
+
+                    // Hapus setelah animasi selesai
+                    setTimeout(() => {
+                        if (drop.parentNode) drop.remove();
+                    }, 5000);
+                }
+
+                // Tambah tetesan setiap 200ms
+                rainInterval = setInterval(addDrop, 200);
+            }
+
+            window.onload = function() {
+                if (templateItems.length>0) {
+                    renderTab(0);
+                }
+                // Tombol navigasi
+                document.getElementById('prevRes').addEventListener('click', function() {
+                    if(current>0) { current--; renderTab(current); }
+                });
+                document.getElementById('nextRes').addEventListener('click', function() {
+                    if(current < templateItems.length-1) { current++; renderTab(current); }
+                });
+
+                // Fitur auto play media setelah interaksi pertama (klik di halaman)
+                const mediaElements = document.querySelectorAll('audio, video');
+                if (mediaElements.length > 0) {
+                    document.body.addEventListener('click', function playMedia() {
+                        mediaElements.forEach(el => {
+                            el.play().catch(e => console.log('auto play dicegah, tapi user sudah klik'));
+                        });
+                        document.body.removeEventListener('click', playMedia);
+                    }, { once: true });
+                }
+
+                // Inisialisasi audio context untuk suara template setelah interaksi
+                document.body.addEventListener('click', function initAudioOnce() {
+                    initAudio();
+                    // putar suara untuk tab saat ini
+                    if (templateItems.length > 0) {
+                        playSound(templateItems[current].id);
+                    }
+                }, { once: true });
+
+                // Buat container rain
+                if (rainEnabled) {
+                    const rainContainer = document.createElement('div');
+                    rainContainer.id = 'rainContainer';
+                    rainContainer.className = 'rain-container';
+                    document.body.appendChild(rainContainer);
+                    startRain();
+                }
+            };
+        <\/script>
+        `;
+
+        const bodyResult = `
+        <div class="result-container">
+            ${mediaTag}
+            <div class="tab-wrapper">
+                <div id="resultTab" class="result-tab"></div>
+                <div class="nav-controls">
+                    <button class="nav-button" id="prevRes" disabled>⏮️ Sebelum</button>
+                    <span class="page-indicator" id="pageInfo">1 / ${templateData.length}</span>
+                    <button class="nav-button" id="nextRes">Berikut ⏭️</button>
+                </div>
+            </div>
+            <p style="text-align:center; margin-top:20px; color:#7a603f;">✨ Klik di mana saja untuk memulai lagu dan suara ✨</p>
+        </div>
+        `;
+
+        return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Ucapan Spesial + YouTube + Hujan Terus</title>${styleResult}</head><body>${bodyResult}${scriptResult}</body></html>`;
+    }
+
+    // ----- Event listeners -----
+    startBtn.addEventListener('click', startPreview);
+    nextBtn.addEventListener('click', nextTab);
+    prevBtn.addEventListener('click', prevTab);
+
+    mediaInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) { mediaFileData = null; return; }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            mediaFileData = {
+                dataURL: ev.target.result,
+                type: file.type
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (selectedIds.length === 0) return;
+        const html = generateHTML();
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'for you.html'; // Nama file "for you.html"
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Inisialisasi grid
+    renderGrid();
+})();
+</script>
+</body>
+</html>
